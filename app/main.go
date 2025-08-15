@@ -39,6 +39,11 @@ func main() {
 			Exit(arguments)
 		}
 
+		if command == "echo" {
+			fmt.Println(arguments)
+			continue
+		}
+
 		fmt.Println(command + ": command not found")
 	}
 }
