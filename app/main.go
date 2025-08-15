@@ -8,8 +8,18 @@ import (
 	"strings"
 )
 
-func IncorrectArgumentsSupplied() {
-	fmt.Println("Incorrect number of arguments")
+func Exit(arguments []string) {
+	if len(arguments) > 1 || len(arguments) == 0 {
+		fmt.Println("Incorrect number of arguments")
+	}
+
+	code, err := strconv.Atoi(arguments[0])
+
+	if err != nil {
+		fmt.Println("Error converting string to int")
+	}
+
+	os.Exit(code)
 }
 
 func main() {
@@ -26,18 +36,7 @@ func main() {
 		var arguments = input[1:]
 
 		if command == "exit" {
-			if len(arguments) > 1 || len(arguments) == 0 {
-				IncorrectArgumentsSupplied()
-			}
-			fmt.Println()
-
-			code, err := strconv.Atoi(arguments[0])
-
-			if err != nil {
-				fmt.Println("Error converting string to int")
-			}
-
-			os.Exit(code)
+			Exit(arguments)
 		}
 
 		fmt.Println(command + ": command not found")
