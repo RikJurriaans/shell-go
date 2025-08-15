@@ -40,7 +40,7 @@ func main() {
 		}
 
 		if command == "echo" {
-			fmt.Println(arguments)
+			fmt.Println(strings.Join(arguments, " "))
 			continue
 		}
 
