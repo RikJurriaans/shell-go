@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Exit(arguments []string) {
+func exit(arguments []string) {
 	if len(arguments) > 1 || len(arguments) == 0 {
 		fmt.Println("Incorrect number of arguments")
 	}
@@ -35,15 +35,14 @@ func main() {
 		var command = input[0]
 		var arguments = input[1:]
 
-		if command == "exit" {
-			Exit(arguments)
-		}
-
-		if command == "echo" {
+		switch command {
+		case "exit":
+			exit(arguments)
+		case "echo":
 			fmt.Println(strings.Join(arguments, " "))
-			continue
+		default:
+			fmt.Println(command + ": command not found")
 		}
 
-		fmt.Println(command + ": command not found")
 	}
 }
