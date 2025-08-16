@@ -34,18 +34,19 @@ func handleType(arguments []string, paths []string) {
 			dir, err := os.Open(path)
 
 			if err != nil {
-				fmt.Println("Error opening directory:", err)
+				continue
 			}
+
 			defer dir.Close()
 
 			files, err := dir.ReadDir(-1)
 			if err != nil {
-				fmt.Println("Error reading directory:", err)
+				continue
 			}
 
 			for _, file := range files {
 				if file.Name() == arguments[0] {
-					fmt.Println("File found")
+					fmt.Println(arguments[0] + " is " + dir.Name() + "/" + file.Name())
 					return
 				}
 			}
