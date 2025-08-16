@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func exit(arguments []string) {
+func handleExit(arguments []string) {
 	if len(arguments) > 1 || len(arguments) == 0 {
 		fmt.Println("Incorrect number of arguments")
 	}
@@ -20,6 +20,18 @@ func exit(arguments []string) {
 	}
 
 	os.Exit(code)
+}
+
+func handleEcho(arguments []string) {
+	fmt.Println(strings.Join(arguments, " "))
+}
+
+func handleType(arguments []string) {
+	if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" {
+		fmt.Println(arguments[0] + " is a shell builtin")
+	} else {
+		fmt.Println(arguments[0] + ": not found")
+	}
 }
 
 func main() {
@@ -37,15 +49,11 @@ func main() {
 
 		switch command {
 		case "exit":
-			exit(arguments)
+			handleExit(arguments)
 		case "echo":
-			fmt.Println(strings.Join(arguments, " "))
+			handleEcho(arguments)
 		case "type":
-			if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" {
-				fmt.Println(arguments[0] + " is a shell builtin")
-			} else {
-				fmt.Println(arguments[0] + ": not found")
-			}
+			handleType(arguments)
 		default:
 			fmt.Println(command + ": command not found")
 		}
