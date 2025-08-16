@@ -44,10 +44,13 @@ func handleType(arguments []string, paths []string) {
 				continue
 			}
 
+			fmt.Println(dir.Name())
+
 			for _, file := range files {
-				if file.Name() == arguments[0] && !file.IsDir() {
-					fmt.Println(arguments[0] + " is " + dir.Name() + "/" + file.Name())
-					return
+				fmt.Println(file.Name())
+				if file.Name() == arguments[0] {
+					fmt.Println(arguments[0] + " is " + file.Name())
+					// return
 				}
 			}
 		}
