@@ -36,11 +36,10 @@ func isFileExecutable(filePath string) bool {
 	return mode.Perm()&0100 != 0
 }
 
-func findExecutableInPath(command string, paths []string) {
+func findExecutableInPath(command string) {
+	paths := strings.SplitSeq(os.Getenv("PATH"), ":")
 	for _, path := range paths {
 		dir, err := os.Open(path)
-
-		defer dir.Close()
 
 		if err != nil {
 			continue
@@ -66,16 +65,15 @@ func findExecutableInPath(command string, paths []string) {
 	fmt.Println(command + ": not found")
 }
 
-func handleType(arguments []string, paths []string) {
+func handleType(arguments []string) {
 	if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" {
 		fmt.Println(arguments[0] + " is a shell builtin")
 	} else {
-		findExecutableInPath(arguments[0], paths)
+		findExecutableInPath(arguments[0])
 	}
 }
 
 func main() {
-	path := strings.Split(os.Getenv("PATH"), ":")
 
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
@@ -95,7 +93,7 @@ func main() {
 		case "echo":
 			handleEcho(arguments)
 		case "type":
-			handleType(arguments, path)
+			handleType(arguments)
 		default:
 			fmt.Println(command + ": command not found")
 		}
