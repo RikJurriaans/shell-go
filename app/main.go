@@ -26,36 +26,51 @@ func handleEcho(arguments []string) {
 	fmt.Println(strings.Join(arguments, " "))
 }
 
-func handleType(arguments []string, paths []string) {
-	if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" {
-		fmt.Println(arguments[0] + " is a shell builtin")
-	} else {
-		for _, path := range paths {
-			dir, err := os.Open(path)
+func isFileExecutable(filePath string) bool {
+	fileInfo, err := os.Stat(filePath)
+	if err != nil {
+		return false
+	}
 
-			if err != nil {
-				continue
-			}
+	mode := fileInfo.Mode()
+	return mode.Perm()&0100 != 0
+}
 
-			defer dir.Close()
+func findExecutableInPath(command string, paths []string) {
+	for _, path := range paths {
+		dir, err := os.Open(path)
 
-			files, err := dir.ReadDir(-1)
-			if err != nil {
-				continue
-			}
+		defer dir.Close()
 
-			fmt.Println(dir.Name())
+		if err != nil {
+			continue
+		}
 
-			for _, file := range files {
-				fmt.Println(file.Name())
-				if file.Name() == arguments[0] {
-					fmt.Println(arguments[0] + " is " + file.Name())
-					// return
+		files, err := dir.ReadDir(-1)
+		if err != nil {
+			continue
+		}
+
+		for _, file := range files {
+			if file.Name() == command {
+				filePath := dir.Name() + "/" + file.Name()
+				if isFileExecutable(filePath) {
+					fmt.Println(command + " is " + filePath)
+					return
 				}
 			}
 		}
 
-		fmt.Println(arguments[0] + ": not found")
+	}
+
+	fmt.Println(command + ": not found")
+}
+
+func handleType(arguments []string, paths []string) {
+	if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" {
+		fmt.Println(arguments[0] + " is a shell builtin")
+	} else {
+		findExecutableInPath(arguments[0], paths)
 	}
 }
 
