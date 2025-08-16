@@ -42,7 +42,7 @@ func main() {
 			fmt.Println(strings.Join(arguments, " "))
 		case "type":
 			if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" {
-				fmt.Println(arguments[0] + " is a shell buildin")
+				fmt.Println(arguments[0] + " is a shell builtin")
 			} else {
 				fmt.Println(arguments[0] + ": command not found")
 			}
