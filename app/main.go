@@ -66,11 +66,19 @@ func findExecutableInPath(command string) {
 }
 
 func handleType(arguments []string) {
-	if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" {
+	if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" || arguments[0] == "pwd" {
 		fmt.Println(arguments[0] + " is a shell builtin")
 	} else {
 		findExecutableInPath(arguments[0])
 	}
+}
+
+func handlePWD() {
+	path, err := os.Getwd()
+	if err != nil {
+		return
+	}
+	fmt.Println(path)
 }
 
 func main() {
@@ -93,6 +101,8 @@ func main() {
 			handleEcho(arguments)
 		case "type":
 			handleType(arguments)
+		case "pwd":
+			handlePWD()
 		default:
 			cmd := exec.Command(command, arguments...)
 			var out strings.Builder
