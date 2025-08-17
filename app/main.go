@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+var buildinCommands = map[string]func([]string){
+	"exit": handleExit,
+	"echo": handleEcho,
+	"pwd":  handlePWD,
+}
+
 func handleExit(arguments []string) {
 	if len(arguments) > 1 || len(arguments) == 0 {
 		fmt.Println("Incorrect number of arguments")
@@ -66,14 +72,15 @@ func findExecutableInPath(command string) {
 }
 
 func handleType(arguments []string) {
-	if arguments[0] == "echo" || arguments[0] == "exit" || arguments[0] == "type" || arguments[0] == "pwd" {
-		fmt.Println(arguments[0] + " is a shell builtin")
-	} else {
+	_, ok := buildinCommands[arguments[0]]
+	if !ok {
 		findExecutableInPath(arguments[0])
 	}
+	fmt.Println(arguments[0] + " is a shell builtin")
 }
 
-func handlePWD() {
+// "type": handleType,
+func handlePWD(arguments []string) {
 	path, err := os.Getwd()
 	if err != nil {
 		return
@@ -94,24 +101,24 @@ func main() {
 		var command = input[0]
 		var arguments = input[1:]
 
-		switch command {
-		case "exit":
-			handleExit(arguments)
-		case "echo":
-			handleEcho(arguments)
-		case "type":
-			handleType(arguments)
-		case "pwd":
-			handlePWD()
-		default:
-			cmd := exec.Command(command, arguments...)
-			var out strings.Builder
-			cmd.Stdout = &out
-			if err := cmd.Run(); err != nil {
-				fmt.Println(command + ": command not found")
-				continue
-			}
-			fmt.Print(out.String())
+		handler, ok := buildinCommands[command]
+		if ok {
+			handler(arguments)
+			continue
 		}
+
+		if command == "type" {
+			handleType(arguments)
+			continue
+		}
+
+		cmd := exec.Command(command, arguments...)
+		var out strings.Builder
+		cmd.Stdout = &out
+		if err := cmd.Run(); err != nil {
+			fmt.Println(command + ": command not found")
+			continue
+		}
+		fmt.Print(out.String())
 	}
 }
