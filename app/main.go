@@ -16,14 +16,20 @@ var buildinCommands = map[string]func([]string){
 }
 
 func handleExit(arguments []string) {
-	if len(arguments) > 1 || len(arguments) == 0 {
+	if len(arguments) > 1 {
 		fmt.Println("Incorrect number of arguments")
+		return
+	}
+
+	if len(arguments) == 0 {
+		os.Exit(0)
 	}
 
 	code, err := strconv.Atoi(arguments[0])
 
 	if err != nil {
 		fmt.Println("Error converting string to int")
+		return
 	}
 
 	os.Exit(code)
@@ -59,12 +65,11 @@ func findExecutableInPath(command string) {
 
 		for _, file := range files {
 			if file.Name() == command {
-				continue
-			}
-
-			filePath := dir.Name() + "/" + file.Name()
-			if _, isIt := isFileExecutable(filePath); isIt {
-				fmt.Println(command + " is " + filePath)
+				filePath := dir.Name() + "/" + file.Name()
+				if _, isIt := isFileExecutable(filePath); isIt {
+					fmt.Println(command + " is " + filePath)
+					return
+				}
 			}
 		}
 	}
