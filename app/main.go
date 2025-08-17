@@ -37,9 +37,20 @@ func handleExit(arguments []string) {
 }
 
 func handleCD(arguments []string) {
-	err := os.Chdir(arguments[0])
+	if len(arguments) != 1 {
+		fmt.Println("currently not implemented with more than 1 argument")
+		return
+	}
+
+	directory := arguments[0]
+
+	if directory == "~" {
+		directory = os.Getenv("HOME")
+	}
+
+	err := os.Chdir(directory)
 	if err != nil {
-		fmt.Println("cd: " + arguments[0] + ": No such file or directory")
+		fmt.Println("cd: " + directory + ": No such file or directory")
 	}
 }
 
