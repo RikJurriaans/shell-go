@@ -72,14 +72,16 @@ func findExecutableInPath(command string) {
 }
 
 func handleType(arguments []string) {
-	_, ok := buildinCommands[arguments[0]]
-	if !ok {
-		findExecutableInPath(arguments[0])
+	for _, argument := range arguments {
+		_, ok := buildinCommands[argument]
+		if argument != "type" && !ok {
+			findExecutableInPath(argument)
+			continue
+		}
+		fmt.Println(argument + " is a shell builtin")
 	}
-	fmt.Println(arguments[0] + " is a shell builtin")
 }
 
-// "type": handleType,
 func handlePWD(arguments []string) {
 	path, err := os.Getwd()
 	if err != nil {
