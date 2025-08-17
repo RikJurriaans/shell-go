@@ -59,11 +59,12 @@ func findExecutableInPath(command string) {
 
 		for _, file := range files {
 			if file.Name() == command {
-				filePath := dir.Name() + "/" + file.Name()
-				if _, isIt := isFileExecutable(filePath); isIt {
-					fmt.Println(command + " is " + filePath)
-					return
-				}
+				continue
+			}
+
+			filePath := dir.Name() + "/" + file.Name()
+			if _, isIt := isFileExecutable(filePath); isIt {
+				fmt.Println(command + " is " + filePath)
 			}
 		}
 	}
