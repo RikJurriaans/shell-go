@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -26,19 +27,19 @@ func handleEcho(arguments []string) {
 	fmt.Println(strings.Join(arguments, " "))
 }
 
-func isFileExecutable(filePath string) bool {
+func isFileExecutable(filePath string) (string, bool) {
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
-		return false
+		return filePath, false
 	}
 
 	mode := fileInfo.Mode()
-	return mode.Perm()&0100 != 0
+	return filePath, mode.Perm()&0100 != 0
 }
 
 func findExecutableInPath(command string) {
 	paths := strings.SplitSeq(os.Getenv("PATH"), ":")
-	for _, path := range paths {
+	for path := range paths {
 		dir, err := os.Open(path)
 
 		if err != nil {
@@ -53,13 +54,12 @@ func findExecutableInPath(command string) {
 		for _, file := range files {
 			if file.Name() == command {
 				filePath := dir.Name() + "/" + file.Name()
-				if isFileExecutable(filePath) {
+				if _, isIt := isFileExecutable(filePath); isIt {
 					fmt.Println(command + " is " + filePath)
 					return
 				}
 			}
 		}
-
 	}
 
 	fmt.Println(command + ": not found")
@@ -74,7 +74,6 @@ func handleType(arguments []string) {
 }
 
 func main() {
-
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
 		inputString, err := bufio.NewReader(os.Stdin).ReadString('\n')
@@ -95,8 +94,14 @@ func main() {
 		case "type":
 			handleType(arguments)
 		default:
-			fmt.Println(command + ": command not found")
+			cmd := exec.Command(command, arguments...)
+			var out strings.Builder
+			cmd.Stdout = &out
+			if err := cmd.Run(); err != nil {
+				fmt.Println(command + ": command not found")
+				continue
+			}
+			fmt.Print(out.String())
 		}
-
 	}
 }
