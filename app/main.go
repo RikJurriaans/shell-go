@@ -37,11 +37,6 @@ func handleExit(arguments []string) {
 }
 
 func handleCD(arguments []string) {
-	if arguments[0][:1] == "./" {
-		// home, _ := os.UserHomeDir()
-		// fmt.Println("relative path")
-	}
-
 	err := os.Chdir(arguments[0])
 	if err != nil {
 		fmt.Println("cd: " + arguments[0] + ": No such file or directory")
