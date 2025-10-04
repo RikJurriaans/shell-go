@@ -115,25 +115,6 @@ func handlePWD(arguments []string) {
 	fmt.Println(path)
 }
 
-func parseInput(in string) []string {
-	in = strings.Trim(in, " ")
-	args := []string{}
-	for i := range len(in) {
-		j := i + 1
-		if string(in[i]) == "'" {
-			for {
-				if string(in[j]) == "'" {
-					break
-				}
-				j++
-			}
-			i = j + 1
-		}
-	}
-	fmt.Println(args)
-	return args
-}
-
 func main() {
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
@@ -143,8 +124,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		var input []string = parseInput(inputString)
-		fmt.Println(input)
+		var input []string = strings.Split(inputString[:len(inputString)-1], " ")
 		var command = input[0]
 		var arguments = input[1:]
 
