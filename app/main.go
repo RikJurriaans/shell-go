@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var buildinCommands = map[string]func([]string){
+var builtinCommands = map[string]func([]string){
 	"exit": handleExit,
 	"echo": handleEcho,
 	"pwd":  handlePWD,
@@ -77,6 +77,8 @@ func findExecutableInPath(command string) {
 			continue
 		}
 
+		defer dir.Close()
+
 		files, err := dir.ReadDir(-1)
 		if err != nil {
 			continue
@@ -98,7 +100,7 @@ func findExecutableInPath(command string) {
 
 func handleType(arguments []string) {
 	for _, argument := range arguments {
-		_, ok := buildinCommands[argument]
+		_, ok := builtinCommands[argument]
 		if argument != "type" && !ok {
 			findExecutableInPath(argument)
 			continue
@@ -125,10 +127,11 @@ func main() {
 		}
 
 		var input []string = strings.Split(inputString[:len(inputString)-1], " ")
+
 		var command = input[0]
 		var arguments = input[1:]
 
-		handler, ok := buildinCommands[command]
+		handler, ok := builtinCommands[command]
 		if ok {
 			handler(arguments)
 			continue
@@ -143,7 +146,7 @@ func main() {
 		var out strings.Builder
 		cmd.Stdout = &out
 		if err := cmd.Run(); err != nil {
-			fmt.Println(command + ": command not found")
+			fmt.Println(command + ": not found")
 			continue
 		}
 		fmt.Print(out.String())
