@@ -117,6 +117,30 @@ func handlePWD(arguments []string) {
 	fmt.Println(path)
 }
 
+func splitWithQuotes(s string) []string {
+	var result []string
+	var current string
+	inQuote := false
+
+	for i := 0; i < len(s); i++ {
+		if s[i] == '\'' {
+			inQuote = !inQuote
+			// current += string(s[i])
+		} else if s[i] == ' ' && !inQuote {
+			if current != "" {
+				result = append(result, current)
+				current = ""
+			}
+		} else {
+			current += string(s[i])
+		}
+	}
+	if current != "" {
+		result = append(result, current)
+	}
+	return result
+}
+
 func main() {
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
@@ -126,7 +150,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		var input []string = strings.Split(inputString[:len(inputString)-1], " ")
+		var input []string = splitWithQuotes(inputString[:len(inputString)-1])
 
 		var command = input[0]
 		var arguments = input[1:]
